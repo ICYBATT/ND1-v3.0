@@ -1,0 +1,12 @@
+build/
+.vs/
+.vscode/
+html/
+latex/
+*.exe
+*.obj
+*.pdb
+*.ilk
+
+studentai1000000.txt
+studentai10000000.txt
