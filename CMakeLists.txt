@@ -24,7 +24,12 @@ add_executable(VectorBenchmark
 
 target_include_directories(VectorBenchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-include(FetchContent)
+add_executable(StudentuBenchmark
+    StudentuBenchmark.cpp
+    studentas.cpp
+)
+
+target_include_directories(StudentuBenchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(FetchContent)
 
