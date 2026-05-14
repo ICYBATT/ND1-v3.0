@@ -12,15 +12,27 @@
     Nuosavas Vector konteineris.
     v3.0 darbo dalis.
 
-    Si klase bus pleciama taip, kad funkcionalumu butu panasi i std::vector.
+    Si klase kuriama taip, kad funkcionalumu butu panasi i std::vector.
 */
 
 template <typename T>
 class Vector {
+public:
+    using value_type = T;
+    using size_type = std::size_t;
+    using reference = T&;
+    using const_reference = const T&;
+    using pointer = T*;
+    using const_pointer = const T*;
+    using iterator = T*;
+    using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
 private:
     T* duomenys_;
-    std::size_t dydis_;
-    std::size_t talpa_;
+    size_type dydis_;
+    size_type talpa_;
 
     void perkelti_i_nauja_talpa(size_type nauja_talpa) {
         T* nauji_duomenys = nullptr;
@@ -44,17 +56,6 @@ private:
     }
 
 public:
-    using value_type = T;
-    using size_type = std::size_t;
-    using reference = T&;
-    using const_reference = const T&;
-    using pointer = T*;
-    using const_pointer = const T*;
-    using iterator = T*;
-    using const_iterator = const T*;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
     Vector()
         : duomenys_(nullptr), dydis_(0), talpa_(0) {}
 
@@ -317,6 +318,10 @@ public:
         return const_reverse_iterator(cbegin());
     }
 
+    void clear() {
+        dydis_ = 0;
+    }
+
     void push_back(const T& reiksme) {
         if (dydis_ == talpa_) {
             size_type nauja_talpa = (talpa_ == 0) ? 1 : talpa_ * 2;
@@ -325,5 +330,72 @@ public:
 
         duomenys_[dydis_] = reiksme;
         ++dydis_;
+    }
+
+    void push_back(T&& reiksme) {
+        if (dydis_ == talpa_) {
+            size_type nauja_talpa = (talpa_ == 0) ? 1 : talpa_ * 2;
+            reserve(nauja_talpa);
+        }
+
+        duomenys_[dydis_] = std::move(reiksme);
+        ++dydis_;
+    }
+
+    template <typename... Args>
+    reference emplace_back(Args&&... args) {
+        if (dydis_ == talpa_) {
+            size_type nauja_talpa = (talpa_ == 0) ? 1 : talpa_ * 2;
+            reserve(nauja_talpa);
+        }
+
+        duomenys_[dydis_] = T(std::forward<Args>(args)...);
+        ++dydis_;
+
+        return back();
+    }
+
+    void pop_back() {
+        if (dydis_ > 0) {
+            --dydis_;
+        }
+    }
+
+    void assign(size_type kiekis, const T& reiksme) {
+        clear();
+
+        if (kiekis > talpa_) {
+            reserve(kiekis);
+        }
+
+        for (size_type i = 0; i < kiekis; ++i) {
+            duomenys_[i] = reiksme;
+        }
+
+        dydis_ = kiekis;
+    }
+
+    template <typename InputIterator>
+    void assign(InputIterator pirmas, InputIterator paskutinis) {
+        clear();
+
+        for (InputIterator it = pirmas; it != paskutinis; ++it) {
+            push_back(*it);
+        }
+    }
+
+    void assign(std::initializer_list<T> sarasas) {
+        clear();
+
+        if (sarasas.size() > talpa_) {
+            reserve(sarasas.size());
+        }
+
+        size_type i = 0;
+        for (const auto& elementas : sarasas) {
+            duomenys_[i++] = elementas;
+        }
+
+        dydis_ = sarasas.size();
     }
 };
