@@ -36,6 +36,7 @@ include(FetchContent)
 FetchContent_Declare(
     Catch2
     URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.5.3.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 FetchContent_MakeAvailable(Catch2)
@@ -51,6 +52,8 @@ add_executable(VectorTests
 target_include_directories(VectorTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(VectorTests PRIVATE Catch2::Catch2WithMain)
+
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 include(CTest)
 include(Catch)
