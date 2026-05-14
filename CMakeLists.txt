@@ -18,6 +18,14 @@ add_executable(1UZD
 
 target_include_directories(1UZD PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_executable(VectorBenchmark
+    VectorBenchmark.cpp
+)
+
+target_include_directories(VectorBenchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(FetchContent)
+
 include(FetchContent)
 
 FetchContent_Declare(
