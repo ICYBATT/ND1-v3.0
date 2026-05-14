@@ -1,0 +1,55 @@
+# Doxygen konfiguracija ND1 v3.0 projektui
+
+PROJECT_NAME           = "ND1 v3.0"
+PROJECT_BRIEF          = "Nuosavas Vector konteineris ir studentu duomenu apdorojimo programa"
+OUTPUT_DIRECTORY       = docs
+
+INPUT                  = Vector.h studentas.h Zmogus.h
+RECURSIVE              = NO
+
+FILE_PATTERNS          = *.h *.cpp
+EXTENSION_MAPPING      = h=C++
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = YES
+
+HTML_OUTPUT            = html
+LATEX_OUTPUT           = latex
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+
+HAVE_DOT               = NO
+UML_LOOK               = NO
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+
+JAVADOC_AUTOBRIEF      = YES
+MULTILINE_CPP_IS_BRIEF = YES
+
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+
+FULL_PATH_NAMES        = NO
+
+STRIP_CODE_COMMENTS    = NO
+
+CASE_SENSE_NAMES       = NO
+
+SHOW_INCLUDE_FILES     = YES
+SHOW_USED_FILES        = YES
+SHOW_FILES             = YES
+
+CLASS_DIAGRAMS         = YES
