@@ -398,4 +398,160 @@ public:
 
         dydis_ = sarasas.size();
     }
+
+    iterator insert(const_iterator pozicija, const T& reiksme) {
+        size_type indeksas = pozicija - cbegin();
+
+        if (indeksas > dydis_) {
+            throw std::out_of_range("Vector insert pozicija uz ribu");
+        }
+
+        if (dydis_ == talpa_) {
+            size_type nauja_talpa = (talpa_ == 0) ? 1 : talpa_ * 2;
+            reserve(nauja_talpa);
+        }
+
+        for (size_type i = dydis_; i > indeksas; --i) {
+            duomenys_[i] = std::move(duomenys_[i - 1]);
+        }
+
+        duomenys_[indeksas] = reiksme;
+        ++dydis_;
+
+        return begin() + indeksas;
+    }
+
+    iterator insert(const_iterator pozicija, T&& reiksme) {
+        size_type indeksas = pozicija - cbegin();
+
+        if (indeksas > dydis_) {
+            throw std::out_of_range("Vector insert pozicija uz ribu");
+        }
+
+        if (dydis_ == talpa_) {
+            size_type nauja_talpa = (talpa_ == 0) ? 1 : talpa_ * 2;
+            reserve(nauja_talpa);
+        }
+
+        for (size_type i = dydis_; i > indeksas; --i) {
+            duomenys_[i] = std::move(duomenys_[i - 1]);
+        }
+
+        duomenys_[indeksas] = std::move(reiksme);
+        ++dydis_;
+
+        return begin() + indeksas;
+    }
+
+    iterator insert(const_iterator pozicija, size_type kiekis, const T& reiksme) {
+        size_type indeksas = pozicija - cbegin();
+
+        if (indeksas > dydis_) {
+            throw std::out_of_range("Vector insert pozicija uz ribu");
+        }
+
+        if (kiekis == 0) {
+            return begin() + indeksas;
+        }
+
+        if (dydis_ + kiekis > talpa_) {
+            size_type nauja_talpa = talpa_;
+            if (nauja_talpa == 0) {
+                nauja_talpa = 1;
+            }
+
+            while (nauja_talpa < dydis_ + kiekis) {
+                nauja_talpa *= 2;
+            }
+
+            reserve(nauja_talpa);
+        }
+
+        for (size_type i = dydis_; i > indeksas; --i) {
+            duomenys_[i + kiekis - 1] = std::move(duomenys_[i - 1]);
+        }
+
+        for (size_type i = 0; i < kiekis; ++i) {
+            duomenys_[indeksas + i] = reiksme;
+        }
+
+        dydis_ += kiekis;
+
+        return begin() + indeksas;
+    }
+
+    iterator insert(const_iterator pozicija, std::initializer_list<T> sarasas) {
+        size_type indeksas = pozicija - cbegin();
+        size_type kiekis = sarasas.size();
+
+        if (indeksas > dydis_) {
+            throw std::out_of_range("Vector insert pozicija uz ribu");
+        }
+
+        if (kiekis == 0) {
+            return begin() + indeksas;
+        }
+
+        if (dydis_ + kiekis > talpa_) {
+            size_type nauja_talpa = talpa_;
+            if (nauja_talpa == 0) {
+                nauja_talpa = 1;
+            }
+
+            while (nauja_talpa < dydis_ + kiekis) {
+                nauja_talpa *= 2;
+            }
+
+            reserve(nauja_talpa);
+        }
+
+        for (size_type i = dydis_; i > indeksas; --i) {
+            duomenys_[i + kiekis - 1] = std::move(duomenys_[i - 1]);
+        }
+
+        size_type i = 0;
+        for (const auto& elementas : sarasas) {
+            duomenys_[indeksas + i] = elementas;
+            ++i;
+        }
+
+        dydis_ += kiekis;
+
+        return begin() + indeksas;
+    }
+
+    iterator erase(const_iterator pozicija) {
+        size_type indeksas = pozicija - cbegin();
+
+        if (indeksas >= dydis_) {
+            throw std::out_of_range("Vector erase pozicija uz ribu");
+        }
+
+        for (size_type i = indeksas; i + 1 < dydis_; ++i) {
+            duomenys_[i] = std::move(duomenys_[i + 1]);
+        }
+
+        --dydis_;
+
+        return begin() + indeksas;
+    }
+
+    iterator erase(const_iterator pirmas, const_iterator paskutinis) {
+        size_type pradzia = pirmas - cbegin();
+        size_type pabaiga = paskutinis - cbegin();
+
+        if (pradzia > pabaiga || pabaiga > dydis_) {
+            throw std::out_of_range("Vector erase intervalas uz ribu");
+        }
+
+        size_type kiekis = pabaiga - pradzia;
+
+        for (size_type i = pradzia; i + kiekis < dydis_; ++i) {
+            duomenys_[i] = std::move(duomenys_[i + kiekis]);
+        }
+
+        dydis_ -= kiekis;
+
+        return begin() + pradzia;
+    }
 };
