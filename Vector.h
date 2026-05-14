@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <utility>
+#include <iterator>
 
 /*
     Nuosavas Vector konteineris.
@@ -29,6 +30,8 @@ public:
     using const_pointer = const T*;
     using iterator = T*;
     using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // Tuscias konstruktorius
     Vector()
@@ -161,6 +164,14 @@ public:
         return dydis_ == 0;
     }
 
+    pointer data() {
+        return duomenys_;
+    }
+
+    const_pointer data() const {
+        return duomenys_;
+    }
+
     reference operator[](size_type indeksas) {
         return duomenys_[indeksas];
     }
@@ -207,12 +218,44 @@ public:
         return duomenys_;
     }
 
+    const_iterator cbegin() const {
+        return duomenys_;
+    }
+
     iterator end() {
         return duomenys_ + dydis_;
     }
 
     const_iterator end() const {
         return duomenys_ + dydis_;
+    }
+
+    const_iterator cend() const {
+        return duomenys_ + dydis_;
+    }
+
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
+
+    const_reverse_iterator rbegin() const {
+        return const_reverse_iterator(end());
+    }
+
+    const_reverse_iterator crbegin() const {
+        return const_reverse_iterator(cend());
+    }
+
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
+
+    const_reverse_iterator rend() const {
+        return const_reverse_iterator(begin());
+    }
+
+    const_reverse_iterator crend() const {
+        return const_reverse_iterator(cbegin());
     }
 
     void push_back(const T& reiksme) {
