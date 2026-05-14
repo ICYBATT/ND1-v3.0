@@ -33,7 +33,7 @@ TEST_CASE("Vector at metodas tikrina ribas", "[Vector]") {
     REQUIRE_THROWS_AS(v.at(3), std::out_of_range);
 }
 
-TEST_CASE("Vector front ir back grazina pirmą ir paskutinį elementą", "[Vector]") {
+TEST_CASE("Vector front ir back grazina pirma ir paskutini elementa", "[Vector]") {
     Vector<int> v = {5, 10, 15};
 
     REQUIRE(v.front() == 5);
