@@ -554,4 +554,50 @@ public:
 
         return begin() + pradzia;
     }
+
+    bool operator==(const Vector& kitas) const {
+        if (dydis_ != kitas.dydis_) {
+            return false;
+        }
+
+        for (size_type i = 0; i < dydis_; ++i) {
+            if (!(duomenys_[i] == kitas.duomenys_[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool operator!=(const Vector& kitas) const {
+        return !(*this == kitas);
+    }
+
+    bool operator<(const Vector& kitas) const {
+        size_type mazesnis_dydis = (dydis_ < kitas.dydis_) ? dydis_ : kitas.dydis_;
+
+        for (size_type i = 0; i < mazesnis_dydis; ++i) {
+            if (duomenys_[i] < kitas.duomenys_[i]) {
+                return true;
+            }
+
+            if (kitas.duomenys_[i] < duomenys_[i]) {
+                return false;
+            }
+        }
+
+        return dydis_ < kitas.dydis_;
+    }
+
+    bool operator<=(const Vector& kitas) const {
+        return !(kitas < *this);
+    }
+
+    bool operator>(const Vector& kitas) const {
+        return kitas < *this;
+    }
+
+    bool operator>=(const Vector& kitas) const {
+        return !(*this < kitas);
+    }
 };
