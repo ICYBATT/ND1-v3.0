@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
+#include <utility>
 
 /*
     Nuosavas Vector konteineris.
@@ -73,9 +74,79 @@ public:
         }
     }
 
+    // Kopijavimo konstruktorius
+    Vector(const Vector& kitas)
+        : duomenys_(nullptr), dydis_(kitas.dydis_), talpa_(kitas.talpa_) {
+        if (talpa_ > 0) {
+            duomenys_ = new T[talpa_];
+            for (size_type i = 0; i < dydis_; ++i) {
+                duomenys_[i] = kitas.duomenys_[i];
+            }
+        }
+    }
+
+    // Perkelimo konstruktorius
+    Vector(Vector&& kitas) noexcept
+        : duomenys_(kitas.duomenys_), dydis_(kitas.dydis_), talpa_(kitas.talpa_) {
+        kitas.duomenys_ = nullptr;
+        kitas.dydis_ = 0;
+        kitas.talpa_ = 0;
+    }
+
+    // Kopijavimo priskyrimo operatorius
+    Vector& operator=(const Vector& kitas) {
+        if (this != &kitas) {
+            T* nauji_duomenys = nullptr;
+
+            if (kitas.talpa_ > 0) {
+                nauji_duomenys = new T[kitas.talpa_];
+                for (size_type i = 0; i < kitas.dydis_; ++i) {
+                    nauji_duomenys[i] = kitas.duomenys_[i];
+                }
+            }
+
+            delete[] duomenys_;
+            duomenys_ = nauji_duomenys;
+            dydis_ = kitas.dydis_;
+            talpa_ = kitas.talpa_;
+        }
+
+        return *this;
+    }
+
+    // Perkelimo priskyrimo operatorius
+    Vector& operator=(Vector&& kitas) noexcept {
+        if (this != &kitas) {
+            delete[] duomenys_;
+
+            duomenys_ = kitas.duomenys_;
+            dydis_ = kitas.dydis_;
+            talpa_ = kitas.talpa_;
+
+            kitas.duomenys_ = nullptr;
+            kitas.dydis_ = 0;
+            kitas.talpa_ = 0;
+        }
+
+        return *this;
+    }
+
+    // Priskyrimas is initializer_list
+    Vector& operator=(std::initializer_list<T> sarasas) {
+        Vector laikinas(sarasas);
+        swap(laikinas);
+        return *this;
+    }
+
     // Destruktorius
     ~Vector() {
         delete[] duomenys_;
+    }
+
+    void swap(Vector& kitas) noexcept {
+        std::swap(duomenys_, kitas.duomenys_);
+        std::swap(dydis_, kitas.dydis_);
+        std::swap(talpa_, kitas.talpa_);
     }
 
     size_type size() const {
