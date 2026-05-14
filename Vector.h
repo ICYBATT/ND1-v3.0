@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <utility>
 #include <iterator>
+#include <limits>
 
 /*
     Nuosavas Vector konteineris.
@@ -21,6 +22,27 @@ private:
     std::size_t dydis_;
     std::size_t talpa_;
 
+    void perkelti_i_nauja_talpa(size_type nauja_talpa) {
+        T* nauji_duomenys = nullptr;
+
+        if (nauja_talpa > 0) {
+            nauji_duomenys = new T[nauja_talpa];
+
+            size_type kiek_kopijuoti = (dydis_ < nauja_talpa) ? dydis_ : nauja_talpa;
+            for (size_type i = 0; i < kiek_kopijuoti; ++i) {
+                nauji_duomenys[i] = std::move(duomenys_[i]);
+            }
+
+            dydis_ = kiek_kopijuoti;
+        } else {
+            dydis_ = 0;
+        }
+
+        delete[] duomenys_;
+        duomenys_ = nauji_duomenys;
+        talpa_ = nauja_talpa;
+    }
+
 public:
     using value_type = T;
     using size_type = std::size_t;
@@ -33,11 +55,9 @@ public:
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    // Tuscias konstruktorius
     Vector()
         : duomenys_(nullptr), dydis_(0), talpa_(0) {}
 
-    // Sukuria Vector su n tusciu elementu
     explicit Vector(size_type kiekis)
         : duomenys_(nullptr), dydis_(kiekis), talpa_(kiekis) {
         if (kiekis > 0) {
@@ -45,7 +65,6 @@ public:
         }
     }
 
-    // Sukuria Vector su n vienodu elementu
     Vector(size_type kiekis, const T& reiksme)
         : duomenys_(nullptr), dydis_(kiekis), talpa_(kiekis) {
         if (kiekis > 0) {
@@ -56,7 +75,6 @@ public:
         }
     }
 
-    // Sukuria Vector is initializer_list, pvz. Vector<int> v = {1, 2, 3}
     Vector(std::initializer_list<T> sarasas)
         : duomenys_(nullptr), dydis_(sarasas.size()), talpa_(sarasas.size()) {
         if (talpa_ > 0) {
@@ -68,7 +86,6 @@ public:
         }
     }
 
-    // Sukuria Vector is iteratoriu intervalo
     template <typename InputIterator>
     Vector(InputIterator pirmas, InputIterator paskutinis)
         : duomenys_(nullptr), dydis_(0), talpa_(0) {
@@ -77,7 +94,6 @@ public:
         }
     }
 
-    // Kopijavimo konstruktorius
     Vector(const Vector& kitas)
         : duomenys_(nullptr), dydis_(kitas.dydis_), talpa_(kitas.talpa_) {
         if (talpa_ > 0) {
@@ -88,7 +104,6 @@ public:
         }
     }
 
-    // Perkelimo konstruktorius
     Vector(Vector&& kitas) noexcept
         : duomenys_(kitas.duomenys_), dydis_(kitas.dydis_), talpa_(kitas.talpa_) {
         kitas.duomenys_ = nullptr;
@@ -96,7 +111,6 @@ public:
         kitas.talpa_ = 0;
     }
 
-    // Kopijavimo priskyrimo operatorius
     Vector& operator=(const Vector& kitas) {
         if (this != &kitas) {
             T* nauji_duomenys = nullptr;
@@ -117,7 +131,6 @@ public:
         return *this;
     }
 
-    // Perkelimo priskyrimo operatorius
     Vector& operator=(Vector&& kitas) noexcept {
         if (this != &kitas) {
             delete[] duomenys_;
@@ -134,14 +147,12 @@ public:
         return *this;
     }
 
-    // Priskyrimas is initializer_list
     Vector& operator=(std::initializer_list<T> sarasas) {
         Vector laikinas(sarasas);
         swap(laikinas);
         return *this;
     }
 
-    // Destruktorius
     ~Vector() {
         delete[] duomenys_;
     }
@@ -160,8 +171,56 @@ public:
         return talpa_;
     }
 
+    size_type max_size() const {
+        return std::numeric_limits<size_type>::max() / sizeof(T);
+    }
+
     bool empty() const {
         return dydis_ == 0;
+    }
+
+    void reserve(size_type nauja_talpa) {
+        if (nauja_talpa > max_size()) {
+            throw std::length_error("Vector reserve virsija max_size");
+        }
+
+        if (nauja_talpa > talpa_) {
+            perkelti_i_nauja_talpa(nauja_talpa);
+        }
+    }
+
+    void resize(size_type naujas_dydis) {
+        if (naujas_dydis > talpa_) {
+            reserve(naujas_dydis);
+        }
+
+        if (naujas_dydis > dydis_) {
+            for (size_type i = dydis_; i < naujas_dydis; ++i) {
+                duomenys_[i] = T();
+            }
+        }
+
+        dydis_ = naujas_dydis;
+    }
+
+    void resize(size_type naujas_dydis, const T& reiksme) {
+        if (naujas_dydis > talpa_) {
+            reserve(naujas_dydis);
+        }
+
+        if (naujas_dydis > dydis_) {
+            for (size_type i = dydis_; i < naujas_dydis; ++i) {
+                duomenys_[i] = reiksme;
+            }
+        }
+
+        dydis_ = naujas_dydis;
+    }
+
+    void shrink_to_fit() {
+        if (dydis_ < talpa_) {
+            perkelti_i_nauja_talpa(dydis_);
+        }
     }
 
     pointer data() {
@@ -261,15 +320,7 @@ public:
     void push_back(const T& reiksme) {
         if (dydis_ == talpa_) {
             size_type nauja_talpa = (talpa_ == 0) ? 1 : talpa_ * 2;
-            T* nauji_duomenys = new T[nauja_talpa];
-
-            for (size_type i = 0; i < dydis_; ++i) {
-                nauji_duomenys[i] = duomenys_[i];
-            }
-
-            delete[] duomenys_;
-            duomenys_ = nauji_duomenys;
-            talpa_ = nauja_talpa;
+            reserve(nauja_talpa);
         }
 
         duomenys_[dydis_] = reiksme;
